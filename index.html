@@ -13,29 +13,124 @@
 <section class="panel notes" id="notes"><div class="noteshead"><div><div class="eyebrow">06 / DEVELOPMENT SPACE</div><h2>PROJECT LOG</h2><p>Gedanken, Spezifikationen und nächste Entwicklungsschritte festhalten.</p></div><div class="hint" id="saved">LOCAL SAVE ACTIVE</div></div><textarea id="memo" placeholder="Notizen zu A.L.E.X. ..."></textarea><div class="save"><span>Wird automatisch lokal gespeichert · CTRL + S</span><button id="save">SAVE NOTES ↗</button></div></section><footer class="foot"><span>© A.L.E.X. PROJECT</span><span>DESIGNED FOR THE NEXT ITERATION</span><span>BUILD 0.2.0</span></footer></div>
 <div class="gate show" id="gate"><div class="gatebox"><div class="eyebrow">SECURE LOCAL ACCESS</div><h2>Welcome back.</h2><p>Lege ein lokales Zugangspasswort fest. Es wird nur in diesem Browser gespeichert.</p><input id="pass" type="password" placeholder="Access password"><button id="enter">INITIALIZE SESSION →</button><small>LOCAL-ONLY PROTECTION · NOT SECURE AUTHENTICATION</small></div></div>
 <script type="module">
-import * as THREE from 'three';import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-const canvas=document.querySelector('#view'),stage=document.querySelector('#stage'),scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,2.55,8.8);
-const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
-const controls=new OrbitControls(camera,canvas);controls.enableDamping=true;controls.dampingFactor=.065;controls.enablePan=true;controls.target.set(0,2.2,0);controls.minDistance=3.8;controls.maxDistance=15;
-scene.add(new THREE.HemisphereLight(0x9bdfff,0x07111d,2));const light=new THREE.PointLight(0x26cfff,32,14);light.position.set(-3,4,4);scene.add(light);
-const figure=new THREE.Group();scene.add(figure);const objects=[];
-function part(geo,pos,scale=[1,1,1],rot=[0,0,0]){const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true,transparent:true,opacity:.9,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));m.position.set(...pos);m.scale.set(...scale);m.rotation.set(...rot);figure.add(m);objects.push(m);return m}
-function ell(pos,scale,detail=18){return part(new THREE.IcosahedronGeometry(1,detail>14?2:1),pos,scale)}
-function rod(a,b,r1,r2){const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),d=B.clone().sub(A),m=part(new THREE.CylinderGeometry(r2,r1,d.length(),12,5),A.clone().add(B).multiplyScalar(.5).toArray());m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());return m}
-// Human-like full-body scan silhouette, intentionally no face details or visible human skin.
-ell([0,3.05,0],[.57,.82,.29]);ell([0,3.35,.015],[.64,.43,.3]);ell([0,2.35,0],[.42,.48,.25]);ell([0,4.12,0],[.31,.4,.29]);ell([0,3.68,0],[.19,.2,.2]);
-for(const s of [-1,1]){ell([s*.62,3.48,0],[.31,.25,.28]);rod([s*.58,3.42,0],[s*.77,2.85,.02],.2,.15);ell([s*.78,2.83,.02],[.18,.18,.17]);rod([s*.78,2.8,.02],[s*.83,2.15,.08],.15,.105);ell([s*.84,2.02,.08],[.13,.18,.1]);ell([s*.24,2.3,0],[.25,.33,.24]);rod([s*.23,2.25,0],[s*.25,1.35,0],.22,.15);ell([s*.25,1.32,.02],[.17,.18,.17]);rod([s*.25,1.28,.01],[s*.25,.45,.02],.16,.11);ell([s*.25,.2,.13],[.17,.14,.3]);ell([s*.31,4.12,0],[.07,.12,.1]);}
-// facial plane and neck lines
-ell([0,4.1,.23],[.2,.22,.08]);ell([0,4.22,.24],[.21,.07,.07]);ell([0,3.76,0],[.2,.19,.18]);
-// belt and pouches
-part(new THREE.TorusGeometry(.46,.045,8,48),[0,2.42,0],[1,1,.62],[Math.PI/2,0,0]);for(const s of [-1,1]){ell([s*.42,2.42,.19],[.13,.16,.09]);ell([s*.29,2.42,.22],[.11,.14,.08]);}
-const floor=new THREE.Mesh(new THREE.TorusGeometry(1.1,.006,6,100),new THREE.MeshBasicMaterial({color:0x1ebfe8,transparent:true,opacity:.55}));floor.rotation.x=Math.PI/2;floor.position.y=.03;figure.add(floor);
-function setMode(mode){const holo=mode==='holo';objects.forEach((o,i)=>{o.material.color.setHex(holo?0x31dcff:((i%9===0||i%13===0)?0xf05cae:0x37e2ff));o.material.opacity=holo?.96:.86});stage.style.background=holo?'radial-gradient(ellipse at 50% 48%,#062d48,#061522 58%,#020811)':'radial-gradient(ellipse at 50% 48%,#10283b,#06121f 58%,#020811)';document.querySelector('#scan').classList.toggle('active',!holo);document.querySelector('#holo').classList.toggle('active',holo);document.querySelector('#caption').textContent=holo?'A.L.E.X. / BLUE DIGITAL HOLOGRAM':'A.L.E.X. / CYAN + MAGENTA SCAN'}
-document.querySelector('#scan').onclick=()=>setMode('scan');document.querySelector('#holo').onclick=()=>setMode('holo');setMode('scan');
-function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}window.addEventListener('resize',resize);resize();
-document.querySelector('#front').onclick=()=>{camera.position.set(0,2.5,9);controls.target.set(0,2.2,0);controls.update()};document.querySelector('#reset').onclick=()=>{camera.position.set(0,2.55,8.8);controls.target.set(0,2.2,0);controls.update()};document.querySelector('#zin').onclick=()=>camera.position.multiplyScalar(.88);document.querySelector('#zout').onclick=()=>camera.position.multiplyScalar(1.12);
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+const canvas=document.querySelector('#view'),stage=document.querySelector('#stage');
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(34,1,.1,100);
+camera.position.set(0,2.35,7.7);
+const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+const controls=new OrbitControls(camera,canvas);
+controls.enableDamping=true;controls.dampingFactor=.065;controls.enablePan=true;
+controls.target.set(0,2.25,0);controls.minDistance=3.5;controls.maxDistance=14;
+scene.add(new THREE.HemisphereLight(0x9bdfff,0x07111d,2));
+const light=new THREE.PointLight(0x26cfff,38,16);light.position.set(-3,4,4);scene.add(light);
+const scanGroup=new THREE.Group(),suitGroup=new THREE.Group();
+scene.add(scanGroup,suitGroup);
+const scanObjects=[],suitObjects=[];
+const cyan=0x28ddff,magenta=0xef55c7;
+function wire(group,arr,geo,pos,scale=[1,1,1],rot=[0,0,0],color=cyan,opacity=.92){
+ const mat=new THREE.MeshBasicMaterial({color,wireframe:true,transparent:true,opacity,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+ const mesh=new THREE.Mesh(geo,mat);mesh.position.set(...pos);mesh.scale.set(...scale);mesh.rotation.set(...rot);group.add(mesh);arr.push(mesh);return mesh;
+}
+function ico(group,arr,pos,scale,detail=2,color=cyan){return wire(group,arr,new THREE.IcosahedronGeometry(1,detail),pos,scale,[0,0,0],color)}
+function sphere(group,arr,pos,scale,color=cyan){return wire(group,arr,new THREE.SphereGeometry(1,16,12),pos,scale,[0,0,0],color)}
+function link(group,arr,a,b,r1,r2,color=cyan,radial=12){
+ const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),d=B.clone().sub(A);
+ const m=wire(group,arr,new THREE.CylinderGeometry(r2,r1,d.length(),radial,8),A.clone().add(B).multiplyScalar(.5).toArray(),[1,1,1],[0,0,0],color);
+ m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());return m;
+}
+function plate(group,arr,pos,scale,color=cyan,detail=1){return ico(group,arr,pos,scale,detail,color)}
+// SCAN MODE: athletic, neutral standing silhouette based on the supplied proportions.
+// Abstract faceted anatomy only: no photorealistic face, skin texture or clothing.
+sphere(scanGroup,scanObjects,[0,3.42,0],[.36,.47,.27]); // head
+ico(scanGroup,scanObjects,[0,3.18,.015],[.31,.22,.26],1); // jaw
+link(scanGroup,scanObjects,[0,3.02,0],[0,2.78,0],.13,.15);
+sphere(scanGroup,scanObjects,[0,2.48,0],[.53,.65,.28]); // torso
+sphere(scanGroup,scanObjects,[0,2.73,0],[.69,.34,.31]); // chest / shoulders
+sphere(scanGroup,scanObjects,[0,2.02,0],[.39,.34,.25]); // waist
+sphere(scanGroup,scanObjects,[0,1.77,0],[.45,.25,.28]); // pelvis
+for(const s of [-1,1]){
+ sphere(scanGroup,scanObjects,[s*.64,2.72,0],[.27,.28,.27]); // deltoids
+ link(scanGroup,scanObjects,[s*.65,2.66,0],[s*.78,2.12,.015],.205,.145);
+ sphere(scanGroup,scanObjects,[s*.78,2.12,.015],[.16,.17,.16]);
+ link(scanGroup,scanObjects,[s*.78,2.08,.015],[s*.79,1.48,.07],.145,.105);
+ sphere(scanGroup,scanObjects,[s*.79,1.35,.07],[.12,.19,.105]);
+ sphere(scanGroup,scanObjects,[s*.79,1.12,.13],[.13,.22,.12]);
+ // hands
+ sphere(scanGroup,scanObjects,[s*.79,.91,.15],[.105,.15,.085]);
+ // legs: athletic thighs, knees, calves and feet
+ sphere(scanGroup,scanObjects,[s*.24,1.62,0],[.245,.39,.25]);
+ link(scanGroup,scanObjects,[s*.24,1.55,0],[s*.25,.91,.01],.205,.135);
+ sphere(scanGroup,scanObjects,[s*.25,.86,.01],[.14,.15,.15]);
+ link(scanGroup,scanObjects,[s*.25,.82,.01],[s*.25,.24,.025],.14,.09);
+ sphere(scanGroup,scanObjects,[s*.25,.19,.09],[.12,.14,.24]);
+}
+// cyan face scan marks and eye points
+link(scanGroup,scanObjects,[-.13,3.49,.235],[.13,3.49,.235],.009,.009,magenta,6);
+for(const s of [-1,1]){sphere(scanGroup,scanObjects,[s*.13,3.49,.245],[.035,.018,.014],cyan);link(scanGroup,scanObjects,[s*.10,3.32,.25],[0,3.28,.28],.006,.006,cyan,6)}
+// Fine waist scan ring
+wire(scanGroup,scanObjects,new THREE.TorusGeometry(.42,.009,5,56),[0,1.92,0],[1,1,.63],[Math.PI/2,0,0],cyan,.9);
+
+// HOLOGRAM MODE: same athletic proportions, now inside a sleek full-body sci-fi suit.
+ico(suitGroup,suitObjects,[0,3.42,0],[.37,.48,.31],2,cyan); // closed helmet
+plate(suitGroup,suitObjects,[0,3.43,.265],[.24,.17,.075],magenta,1); // visor
+link(suitGroup,suitObjects,[0,3.0,0],[0,2.78,0],.18,.17,cyan);
+plate(suitGroup,suitObjects,[0,2.48,0],[.58,.68,.34],cyan,2); // torso armor
+plate(suitGroup,suitObjects,[0,2.76,.02],[.69,.32,.33],magenta,1); // chest contour
+plate(suitGroup,suitObjects,[0,2.08,.015],[.43,.34,.29],cyan,1);
+for(const s of [-1,1]){
+ plate(suitGroup,suitObjects,[s*.65,2.72,0],[.31,.3,.3],magenta,1);
+ link(suitGroup,suitObjects,[s*.65,2.64,0],[s*.78,2.12,.02],.22,.16,cyan);
+ plate(suitGroup,suitObjects,[s*.78,2.12,.02],[.18,.18,.18],magenta,1);
+ link(suitGroup,suitObjects,[s*.78,2.07,.02],[s*.79,1.47,.07],.16,.12,cyan);
+ plate(suitGroup,suitObjects,[s*.79,1.37,.07],[.15,.2,.13],magenta,1);
+ plate(suitGroup,suitObjects,[s*.79,1.08,.13],[.14,.24,.13],cyan,1);
+ plate(suitGroup,suitObjects,[s*.79,.9,.15],[.12,.16,.1],magenta,1);
+ plate(suitGroup,suitObjects,[s*.24,1.62,0],[.26,.4,.26],cyan,1);
+ link(suitGroup,suitObjects,[s*.24,1.54,0],[s*.25,.91,.01],.22,.15,cyan);
+ plate(suitGroup,suitObjects,[s*.25,.86,.01],[.15,.17,.16],magenta,1);
+ link(suitGroup,suitObjects,[s*.25,.81,.01],[s*.25,.24,.025],.15,.105,cyan);
+ plate(suitGroup,suitObjects,[s*.25,.19,.09],[.14,.15,.26],magenta,1);
+}
+// Armor seams, chest insignia, utility belt and pouches
+for(const s of [-1,1]){
+ link(suitGroup,suitObjects,[s*.06,2.78,.31],[s*.38,2.52,.28],.012,.012,magenta,6);
+ link(suitGroup,suitObjects,[s*.38,2.52,.28],[s*.47,2.2,.24],.012,.012,magenta,6);
+ plate(suitGroup,suitObjects,[s*.42,1.93,.22],[.11,.14,.09],magenta,1);
+ plate(suitGroup,suitObjects,[s*.31,1.92,.24],[.10,.14,.08],cyan,1);
+}
+wire(suitGroup,suitObjects,new THREE.TorusGeometry(.46,.035,8,48),[0,1.94,0],[1,1,.65],[Math.PI/2,0,0],magenta,.95);
+const floorMat=new THREE.MeshBasicMaterial({color:cyan,transparent:true,opacity:.55});
+const floor=new THREE.Mesh(new THREE.TorusGeometry(1.15,.006,6,100),floorMat);floor.rotation.x=Math.PI/2;floor.position.y=.025;scene.add(floor);
+function setMode(mode){
+ const suit=mode==='holo';scanGroup.visible=!suit;suitGroup.visible=suit;
+ stage.style.background=suit?'radial-gradient(ellipse at 50% 48%,#062c45,#061522 58%,#020811)':'radial-gradient(ellipse at 50% 48%,#08243a,#06121f 58%,#020811)';
+ document.querySelector('#scan').classList.toggle('active',!suit);document.querySelector('#holo').classList.toggle('active',suit);
+ document.querySelector('#caption').textContent=suit?'A.L.E.X. / ARMORED HOLOGRAM':'A.L.E.X. / CYAN HUMAN SCAN';
+ document.querySelector('.viewhead h2').textContent=suit?'A.L.E.X. SUIT HOLOGRAM':'ATHLETIC BODY SCAN';
+}
+document.querySelector('#scan').onclick=()=>setMode('scan');
+document.querySelector('#holo').onclick=()=>setMode('holo');
+setMode('scan');
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+window.addEventListener('resize',resize);resize();
+function resetView(){camera.position.set(0,2.35,7.7);controls.target.set(0,2.25,0);controls.update()}
+document.querySelector('#front').onclick=resetView;document.querySelector('#reset').onclick=resetView;
+document.querySelector('#zin').onclick=()=>camera.position.multiplyScalar(.88);
+document.querySelector('#zout').onclick=()=>camera.position.multiplyScalar(1.12);
 function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
 document.querySelectorAll('.component').forEach(c=>c.onclick=()=>{document.querySelectorAll('.component').forEach(x=>x.classList.remove('active'));c.classList.add('active');document.querySelector('#componentInfo').textContent=c.dataset.info==='belt'?'Utility belt · Gürtel mit mehreren kleinen Taschen. Weitere Details folgen.':'Boot system · Hohe, verstärkte Stiefel. Material und Funktionen können ergänzt werden.'});
-const memo=document.querySelector('#memo'),saved=document.querySelector('#saved');memo.value=localStorage.getItem('alex_project_notes')||'';function save(){localStorage.setItem('alex_project_notes',memo.value);saved.textContent='SAVED LOCALLY · '+new Date().toLocaleTimeString('de-DE')}memo.addEventListener('input',()=>{saved.textContent='UNSAVED CHANGES';clearTimeout(window.memoTimer);window.memoTimer=setTimeout(save,500)});document.querySelector('#save').onclick=save;document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save()}});
-const gate=document.querySelector('#gate'),pass=document.querySelector('#pass');if(localStorage.getItem('alex_access_session')==='1')gate.classList.remove('show');document.querySelector('#enter').onclick=()=>{const v=pass.value,old=localStorage.getItem('alex_access_password');if(!v){pass.focus();return}if(!old){if(v.length<4){alert('Mindestens 4 Zeichen verwenden.');return}localStorage.setItem('alex_access_password',v);localStorage.setItem('alex_access_session','1');gate.classList.remove('show')}else if(v===old){localStorage.setItem('alex_access_session','1');gate.classList.remove('show')}else alert('Zugang verweigert.')};pass.addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#enter').click()});
+const memo=document.querySelector('#memo'),saved=document.querySelector('#saved');memo.value=localStorage.getItem('alex_project_notes')||'';
+function save(){localStorage.setItem('alex_project_notes',memo.value);saved.textContent='SAVED LOCALLY · '+new Date().toLocaleTimeString('de-DE')}
+memo.addEventListener('input',()=>{saved.textContent='UNSAVED CHANGES';clearTimeout(window.memoTimer);window.memoTimer=setTimeout(save,500)});
+document.querySelector('#save').onclick=save;
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();save()}});
+const gate=document.querySelector('#gate'),pass=document.querySelector('#pass');
+if(localStorage.getItem('alex_access_session')==='1')gate.classList.remove('show');
+document.querySelector('#enter').onclick=()=>{const v=pass.value,old=localStorage.getItem('alex_access_password');if(!v){pass.focus();return}if(!old){if(v.length<4){alert('Mindestens 4 Zeichen verwenden.');return}localStorage.setItem('alex_access_password',v);localStorage.setItem('alex_access_session','1');gate.classList.remove('show')}else if(v===old){localStorage.setItem('alex_access_session','1');gate.classList.remove('show')}else alert('Zugang verweigert.')};
+pass.addEventListener('keydown',e=>{if(e.key==='Enter')document.querySelector('#enter').click()});
 </script></body></html>
