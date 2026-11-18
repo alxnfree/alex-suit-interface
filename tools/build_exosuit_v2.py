@@ -77,11 +77,11 @@ add('base_head_skull',loft([(1.72,.075,.082,0,.005),(1.76,.105,.105,0,.005),(1.8
 add('base_jaw',loft([(1.715,.055,.06,0,.025),(1.75,.082,.075,0,.02),(1.79,.09,.082,0,.012)]),'carbon')
 for s,d in [(-1,'L'),(1,'R')]:
  add(f'base_ear_{d}',ball((s*.112,1.825,0),(.018,.035,.028),2),'carbon')
- add(f'base_upper_arm_{d}',loft([(1.19,.065,.07,s*.39,0),(1.28,.083,.082,s*.405,0),(1.40,.095,.09,s*.405,0),(1.51,.09,.085,s*.38,0)]),'carbon')
- add(f'base_forearm_{d}',loft([(.91,.055,.06,s*.49,.005),(.99,.067,.07,s*.49,.005),(1.10,.073,.073,s*.475,.005),(1.20,.068,.07,s*.455,.005)]),'carbon')
- add(f'base_hand_{d}',loft([(.79,.042,.032,s*.50,.02),(.83,.055,.04,s*.50,.02),(.90,.052,.042,s*.49,.01)]),'carbon')
+ add(f'base_upper_arm_{d}',loft([(1.19,.065,.07,s*.405,0),(1.28,.083,.082,s*.405,0),(1.40,.095,.09,s*.405,0),(1.51,.09,.085,s*.405,0)]),'carbon')
+ add(f'base_forearm_{d}',loft([(.91,.055,.06,s*.435,.005),(.99,.067,.07,s*.435,.005),(1.10,.073,.073,s*.43,.005),(1.20,.068,.07,s*.425,.005)]),'carbon')
+ add(f'base_hand_{d}',loft([(.79,.042,.032,s*.445,.02),(.83,.055,.04,s*.445,.02),(.90,.052,.042,s*.445,.01)]),'carbon')
  for i in range(4):
-  xx=s*(.465+i*.023)
+  xx=s*(.405+i*.023)
   add(f'base_finger_{d}_{i+1}',loft([(.685,.010,.011,xx,.025),(.72,.012,.013,xx,.025),(.77,.011,.012,xx,.025)]),'carbon')
  add(f'base_thumb_{d}',loft([(.75,.012,.013,s*.445,.03),(.79,.014,.014,s*.435,.03),(.83,.012,.012,s*.45,.025)]),'carbon')
  add(f'base_thigh_{d}',loft([(.48,.078,.082,s*.165,0),(.57,.103,.10,s*.17,0),(.73,.112,.11,s*.17,0),(.88,.105,.105,s*.16,0),(.98,.09,.09,s*.15,0)]),'carbon')
@@ -111,10 +111,8 @@ for s,d in [(-1,'L'),(1,'R')]:
  add(f'chest_side_intake_{d}',plate((s*.29,1.43,.08),.055,.14,.028,.18,s*.1),'rubber')
  detail_grid(f'chest_service_{d}',s*.155,1.44,.17,.12,.10,3,3,'edge')
 add('sternum_spine',plate((0,1.44,.205),.085,.29,.055),'edge')
-reactor=trimesh.creation.cylinder(radius=.046,height=.018,sections=24);reactor.apply_translation([0,1.45,.245]);add('reactor_core',reactor,'cyan')
-ring=trimesh.creation.annulus(r_min=.052,r_max=.062,height=.012,sections=32);ring.apply_translation([0,1.45,.244]);add('reactor_outer_ring',ring,'edge')
-for i in range(8):
- a=2*math.pi*i/8;add(f'reactor_radial_{i+1:02}',cyl((.052*math.cos(a),1.45+.052*math.sin(a),.252),(.059*math.cos(a),1.45+.059*math.sin(a),.252),.0025,6),'cyan')
+for i,yy in enumerate((1.515,1.455,1.395)):
+ add(f'sternum_status_inlay_{i+1}',plate((0,yy,.239),.012,.026,.006,.12),'cyan')
 add('back_plate',plate((0,1.43,-.145),.37,.39,.07),'armor')
 add('back_spinal_housing',loft([(1.20,.055,.045,0,-.18),(1.42,.07,.05,0,-.19),(1.62,.06,.045,0,-.15)]),'armor')
 for s,d in [(-1,'L'),(1,'R')]:
@@ -128,25 +126,25 @@ for s,d in [(-1,'L'),(1,'R')]:
  add(f'shoulder_cap_{d}',ball((s*.405,1.58,.045),(.115,.075,.105),2),'armor')
  for i in range(5):add(f'shoulder_scale_{d}_{i+1}',plate((s*(.32+i*.038),1.49,.12),.04,.09,.018,.18,s*.1),'edge')
  add(f'shoulder_status_{d}',cyl((s*.34,1.62,.11),(s*.47,1.62,.09),.005,8),'cyan')
- panel(f'upper_arm_{d}',(s*.415,1.335,.07),.15,.255,'armor',True,3)
+ panel(f'upper_arm_{d}',(s*.405,1.335,.07),.15,.255,'armor',True,3)
  add(f'upper_arm_lateral_{d}',plate((s*.50,1.34,.005),.06,.22,.035,.18,s*.08),'edge')
  for i in range(4):add(f'upper_arm_rib_{d}_{i+1}',cyl((s*.37,1.25+i*.05,.09),(s*.46,1.25+i*.05,.09),.003,6),'edge')
- add(f'elbow_{d}',ball((s*.47,1.19,.025),(.075,.075,.075),2),'edge')
- add(f'elbow_cap_{d}',plate((s*.47,1.19,.095),.105,.10,.035),'armor')
- add(f'elbow_hinge_{d}',cyl((s*.49,1.15,-.01),(s*.49,1.23,-.01),.018,12),'edge')
- panel(f'forearm_{d}',(s*.49,1.015,.075),.17,.265,'armor',True,4)
- add(f'forearm_outer_rail_{d}',cyl((s*.56,1.13,.045),(s*.56,.90,.045),.012,8),'edge')
- add(f'forearm_inner_rail_{d}',cyl((s*.42,1.12,.08),(s*.43,.91,.08),.008,8),'magenta')
+ add(f'elbow_{d}',ball((s*.425,1.19,.025),(.075,.075,.075),2),'edge')
+ add(f'elbow_cap_{d}',plate((s*.425,1.19,.095),.105,.10,.035),'armor')
+ add(f'elbow_hinge_{d}',cyl((s*.425,1.15,-.01),(s*.425,1.23,-.01),.018,12),'edge')
+ panel(f'forearm_{d}',(s*.435,1.015,.075),.17,.265,'armor',True,4)
+ add(f'forearm_outer_rail_{d}',cyl((s*.50,1.13,.045),(s*.50,.90,.045),.012,8),'edge')
+ add(f'forearm_inner_rail_{d}',cyl((s*.37,1.12,.08),(s*.38,.91,.08),.008,8),'magenta')
  for i in range(6):add(f'forearm_vent_{d}_{i+1}',plate((s*.49,.94+i*.027,.112),.09,.009,.006),'rubber')
- add(f'wrist_joint_{d}',ball((s*.50,.865,.02),(.047,.045,.045),2),'edge')
- add(f'hand_guard_{d}',plate((s*.50,.815,.075),.115,.10,.035),'armor')
- add(f'hand_dorsal_{d}',plate((s*.50,.83,.105),.075,.085,.018),'edge')
+ add(f'wrist_joint_{d}',ball((s*.445,.865,.02),(.047,.045,.045),2),'edge')
+ add(f'hand_guard_{d}',plate((s*.445,.815,.075),.115,.10,.035),'armor')
+ add(f'hand_dorsal_{d}',plate((s*.445,.83,.105),.075,.085,.018),'edge')
  for i in range(4):
-  xx=s*(.455+i*.03)
+  xx=s*(.40+i*.03)
   add(f'finger_armor_{d}_{i}',plate((xx,.745,.05),.022,.07,.018),'armor')
   add(f'finger_tip_{d}_{i}',ball((xx,.705,.05),(.011,.018,.012),1),'edge')
   add(f'finger_knuckle_{d}_{i}',ball((xx,.765,.07),(.013,.012,.012),1),'edge')
- add(f'thumb_{d}',cyl((s*.445,.81,.04),(s*.425,.755,.07),.014,8),'armor')
+ add(f'thumb_{d}',cyl((s*.39,.81,.04),(s*.37,.755,.07),.014,8),'armor')
  add(f'palm_core_{d}',plate((s*.50,.78,.10),.075,.055,.018),'rubber')
 for i,(yy,ww) in enumerate([(1.245,.30),(1.17,.295),(1.095,.285),(1.02,.27)]):
  panel(f'abdomen_segment_{i+1}',(0,yy,.13),ww,.066,'armor',True,2)
@@ -165,8 +163,7 @@ for s,d in [(-1,'L'),(1,'R')]:
   for j in range(3):add(f'{prefix}_molle_{j+1}',cyl((x-.025+j*.025,.925,.18),(x-.025+j*.025,.96,.18),.003,6),'edge')
  for i in range(3):
   x=s*(.34+i*.025);add(f'belt_cartridge_{d}_{i+1}',cyl((x,.94,.04),(x,.99,.04),.012,8),'edge')
- add(f'thigh_rig_{d}',cyl((s*.24,.89,.04),(s*.25,.75,.04),.012,8),'edge')
- add(f'thigh_rig_plate_{d}',plate((s*.25,.75,.095),.10,.11,.035),'armor')
+ # Hip and thigh armor are self-contained; no exposed hanging thigh rods.
 for s,d in [(-1,'L'),(1,'R')]:
  panel(f'hip_{d}',(s*.19,.88,.105),.20,.16,'armor',True,2)
  add(f'hip_lateral_{d}',plate((s*.275,.88,.01),.07,.18,.04,.18,s*.1),'edge')
@@ -222,6 +219,11 @@ for i in range(12):
  x=(i-5.5)*.025
  add(f'sternum_rivet_{i+1:02}',ball((x,1.44,.24),(.004,.004,.003),1),'edge')
 for s,d in [(-1,'L'),(1,'R')]:
- for region,pts in [('shoulder_cable',[(s*.30,1.55,-.08),(s*.36,1.43,-.09),(s*.40,1.30,-.08)]),('hip_cable',[(s*.22,.90,-.08),(s*.24,.78,-.08),(s*.22,.62,-.07)]),('calf_cable',[(s*.22,.43,-.04),(s*.23,.30,-.04),(s*.20,.18,-.03)])]:cable(f'{region}_{d}',pts,.006,'magenta')
+ cable(f'shoulder_cable_{d}',[(s*.30,1.55,-.08),(s*.36,1.43,-.09),(s*.40,1.30,-.08)],.005,'edge')
+bounds=S.bounds
+height=float(bounds[1,1]-bounds[0,1])
+scale_y=1.8/height
+T=np.eye(4);T[1,1]=scale_y;T[1,3]=-float(bounds[0,1])*scale_y
+S.apply_transform(T)
 S.export(OUT)
-print('Created',OUT,'named_mesh_nodes',COUNT,'scene_nodes',len(S.graph.nodes),'bytes',os.path.getsize(OUT))
+print('Created',OUT,'height_m',round(float(S.bounds[1,1]-S.bounds[0,1]),6),'named_mesh_nodes',COUNT,'scene_nodes',len(S.graph.nodes),'bytes',os.path.getsize(OUT))
