@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'tools/build_exosuit.py'
+      - 'tools/build_exosuit_v2.py.zlib.b64'
       - '.github/workflows/build-exosuit.yml'
 permissions:
   contents: write
@@ -17,8 +18,14 @@ jobs:
           python-version: '3.12'
       - name: Install mesh builder
         run: python -m pip install --upgrade pip numpy trimesh
-      - name: Generate named GLB model
-        run: python tools/build_exosuit.py
+      - name: Decode and generate high-detail model
+        run: |
+          python - <<'PY'
+          import base64, zlib
+          packed = open('tools/build_exosuit_v2.py.zlib.b64', 'rb').read()
+          open('tools/build_exosuit_v2.py', 'wb').write(zlib.decompress(base64.b64decode(packed)))
+          PY
+          python tools/build_exosuit_v2.py
       - name: Commit generated model
         run: |
           git config user.name "github-actions[bot]"
