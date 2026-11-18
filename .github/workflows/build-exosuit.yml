@@ -36,4 +36,5 @@ jobs:
             exit 0
           fi
           git commit -m "Generate modular A.L.E.X. exosuit GLB"
+          git pull --rebase origin main
           git push
