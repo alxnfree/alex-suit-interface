@@ -5,6 +5,7 @@ on:
     paths:
       - 'tools/build_exosuit.py'
       - 'tools/build_exosuit_v2.py.zlib.b64'
+      - 'tools/build_exosuit_v2.py'
       - '.github/workflows/build-exosuit.yml'
 permissions:
   contents: write
@@ -30,7 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/alex-exosuit.glb
+          git add assets/alex-exosuit.glb tools/build_exosuit_v2.py
           if git diff --cached --quiet; then
             echo "GLB is already current"
             exit 0
