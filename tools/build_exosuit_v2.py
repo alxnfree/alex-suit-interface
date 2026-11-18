@@ -18,11 +18,11 @@ def add(n,m,mat='armor'):
  if m is None or len(m.faces)==0:return
  m.visual=trimesh.visual.TextureVisuals(material=M[mat]);S.add_geometry(m,node_name=n,geom_name=n);COUNT+=1
 def ball(c,r,sub=2):
- m=trimesh.creation.icosphere(subdivisions=sub);m.apply_scale(r);m.apply_translation(c);return m
+ m=trimesh.creation.icosphere(subdivisions=max(3,sub));m.apply_scale(r);m.apply_translation(c);return m
 def cyl(a,b,r,sections=10):
  a=np.array(a,float);b=np.array(b,float);d=b-a;L=np.linalg.norm(d)
  if L<1e-7:return None
- m=trimesh.creation.cylinder(radius=r,height=L,sections=sections);m.apply_transform(trimesh.geometry.align_vectors([0,0,1],d));m.apply_translation((a+b)/2);return m
+ m=trimesh.creation.cylinder(radius=r,height=L,sections=max(24,sections));m.apply_transform(trimesh.geometry.align_vectors([0,0,1],d));m.apply_translation((a+b)/2);return m
 def loft(prof,seg=32):
  v=[];f=[]
  for y,rx,rz,cx,cz in prof:
@@ -180,7 +180,6 @@ for s,d in [(-1,'L'),(1,'R')]:
  for i in range(3):add(f'knee_louver_{d}_{i+1}',cyl((s*.22,.45+i*.025,.19),(s*.12,.45+i*.025,.19),.003,6),'cyan')
  panel(f'shin_{d}',(s*.17,.285,.105),.17,.30,'armor',True,4)
  add(f'shin_side_rail_{d}',cyl((s*.255,.42,.06),(s*.255,.14,.08),.012,8),'edge')
- add(f'shin_inner_rail_{d}',cyl((s*.11,.40,.12),(s*.11,.15,.12),.007,8),'magenta')
  for i in range(5):add(f'shin_vent_{d}_{i+1}',plate((s*.17,.20+i*.035,.14),.085,.009,.006),'rubber')
  add(f'ankle_joint_{d}',ball((s*.17,.12,.01),(.055,.06,.06),2),'edge')
  add(f'boot_{d}',loft([(.035,.085,.155,s*.17,.105),(.065,.095,.17,s*.17,.105),(.12,.09,.155,s*.17,.085),(.18,.073,.11,s*.17,.035),(.25,.067,.085,s*.17,.005)]),'armor')
@@ -210,7 +209,7 @@ for side,d in [(-1,'L'),(1,'R')]:
   for row in range(5):
    for col in range(3):
     x=side*(cx+(col-1)*w/3);y=cy+(row-2)*h/5
-    add(f'{region}_segmented_inlay_{d}_{row+1:02}_{col+1:02}',plate((x,y,cz),w/3*.55,h/5*.52,.006,.18),'edge' if (row+col)%3 else 'magenta')
+    add(f'{region}_segmented_inlay_{d}_{row+1:02}_{col+1:02}',plate((x,y,cz),w/3*.55,h/5*.52,.006,.18),('edge' if region in ('thigh','shin') else ('edge' if (row+col)%3 else 'magenta')))
 for i in range(18):
  y=1.20+i*.022
  add(f'dorsal_spine_link_{i+1:02}',plate((0,y,-.205),.055,.018,.012),'edge')
