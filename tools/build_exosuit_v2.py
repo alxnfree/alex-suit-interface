@@ -78,12 +78,12 @@ add('base_jaw',loft([(1.715,.055,.06,0,.025),(1.75,.082,.075,0,.02),(1.79,.09,.0
 for s,d in [(-1,'L'),(1,'R')]:
  add(f'base_ear_{d}',ball((s*.112,1.825,0),(.018,.035,.028),2),'carbon')
  add(f'base_upper_arm_{d}',loft([(1.19,.065,.07,s*.405,0),(1.28,.083,.082,s*.405,0),(1.40,.095,.09,s*.405,0),(1.51,.09,.085,s*.405,0)]),'carbon')
- add(f'base_forearm_{d}',loft([(.91,.055,.06,s*.435,.005),(.99,.067,.07,s*.435,.005),(1.10,.073,.073,s*.43,.005),(1.20,.068,.07,s*.425,.005)]),'carbon')
- add(f'base_hand_{d}',loft([(.79,.042,.032,s*.445,.02),(.83,.055,.04,s*.445,.02),(.90,.052,.042,s*.445,.01)]),'carbon')
+ add(f'base_forearm_{d}',loft([(.91,.055,.06,s*.365,.005),(.99,.067,.07,s*.385,.005),(1.10,.073,.073,s*.405,.005),(1.20,.068,.07,s*.425,.005)]),'carbon')
+ add(f'base_hand_{d}',loft([(.79,.042,.032,s*.345,.02),(.83,.055,.04,s*.35,.02),(.90,.052,.042,s*.365,.01)]),'carbon')
  for i in range(4):
-  xx=s*(.405+i*.023)
+  xx=s*(.305+i*.023)
   add(f'base_finger_{d}_{i+1}',loft([(.685,.010,.011,xx,.025),(.72,.012,.013,xx,.025),(.77,.011,.012,xx,.025)]),'carbon')
- add(f'base_thumb_{d}',loft([(.75,.012,.013,s*.445,.03),(.79,.014,.014,s*.435,.03),(.83,.012,.012,s*.45,.025)]),'carbon')
+ add(f'base_thumb_{d}',loft([(.75,.012,.013,s*.35,.03),(.79,.014,.014,s*.34,.03),(.83,.012,.012,s*.36,.025)]),'carbon')
  add(f'base_thigh_{d}',loft([(.48,.078,.082,s*.165,0),(.57,.103,.10,s*.17,0),(.73,.112,.11,s*.17,0),(.88,.105,.105,s*.16,0),(.98,.09,.09,s*.15,0)]),'carbon')
  add(f'base_shin_{d}',loft([(.12,.052,.06,s*.165,.005),(.20,.065,.07,s*.165,.005),(.34,.076,.078,s*.165,0),(.47,.07,.073,s*.165,0),(.54,.068,.07,s*.165,0)]),'carbon')
  add(f'base_foot_{d}',loft([(.045,.07,.135,s*.165,.095),(.075,.082,.15,s*.165,.10),(.13,.073,.12,s*.165,.055),(.19,.055,.08,s*.165,.015)]),'carbon')
@@ -132,13 +132,13 @@ for s,d in [(-1,'L'),(1,'R')]:
  add(f'elbow_{d}',ball((s*.425,1.19,.025),(.075,.075,.075),2),'edge')
  add(f'elbow_cap_{d}',plate((s*.425,1.19,.095),.105,.10,.035),'armor')
  add(f'elbow_hinge_{d}',cyl((s*.425,1.15,-.01),(s*.425,1.23,-.01),.018,12),'edge')
- panel(f'forearm_{d}',(s*.435,1.015,.075),.17,.265,'armor',True,4)
- add(f'forearm_outer_rail_{d}',cyl((s*.50,1.13,.045),(s*.50,.90,.045),.012,8),'edge')
- add(f'forearm_inner_rail_{d}',cyl((s*.37,1.12,.08),(s*.38,.91,.08),.008,8),'magenta')
+ panel(f'forearm_{d}',(s*.395,1.015,.075),.17,.265,'armor',True,4)
+ add(f'forearm_outer_rail_{d}',cyl((s*.46,1.13,.045),(s*.35,.90,.045),.012,8),'edge')
+ add(f'forearm_inner_rail_{d}',cyl((s*.37,1.12,.08),(s*.32,.91,.08),.008,8),'edge')
  for i in range(6):add(f'forearm_vent_{d}_{i+1}',plate((s*.49,.94+i*.027,.112),.09,.009,.006),'rubber')
- add(f'wrist_joint_{d}',ball((s*.445,.865,.02),(.047,.045,.045),2),'edge')
- add(f'hand_guard_{d}',plate((s*.445,.815,.075),.115,.10,.035),'armor')
- add(f'hand_dorsal_{d}',plate((s*.445,.83,.105),.075,.085,.018),'edge')
+ add(f'wrist_joint_{d}',ball((s*.35,.865,.02),(.047,.045,.045),2),'edge')
+ add(f'hand_guard_{d}',plate((s*.35,.815,.075),.115,.10,.035),'armor')
+ add(f'hand_dorsal_{d}',plate((s*.35,.83,.105),.075,.085,.018),'edge')
  for i in range(4):
   xx=s*(.40+i*.03)
   add(f'finger_armor_{d}_{i}',plate((xx,.745,.05),.022,.07,.018),'armor')
@@ -219,6 +219,117 @@ for i in range(12):
  add(f'sternum_rivet_{i+1:02}',ball((x,1.44,.24),(.004,.004,.003),1),'edge')
 for s,d in [(-1,'L'),(1,'R')]:
  cable(f'shoulder_cable_{d}',[(s*.30,1.55,-.08),(s*.36,1.43,-.09),(s*.40,1.30,-.08)],.005,'edge')
+
+# --- Anatomical reference layer: full-body muscular and skeletal visualization ---
+M.update({
+ 'muscle':PBRMaterial(name='Anatomical muscle',baseColorFactor=[132,58,48,255],metallicFactor=.02,roughnessFactor=.78),
+ 'bone':PBRMaterial(name='Ivory cortical bone',baseColorFactor=[210,198,164,255],metallicFactor=.02,roughnessFactor=.7),
+ 'vessel':PBRMaterial(name='Vascular structures',baseColorFactor=[160,48,43,255],metallicFactor=.0,roughnessFactor=.72),
+ 'nerve':PBRMaterial(name='Peripheral nerves',baseColorFactor=[220,174,72,255],metallicFactor=.0,roughnessFactor=.68),
+ 'cartilage':PBRMaterial(name='Joint cartilage',baseColorFactor=[90,164,157,255],metallicFactor=.0,roughnessFactor=.55),
+})
+ANATOMY_COUNT=0
+def anat(n,m,mat):
+ global ANATOMY_COUNT
+ if m is None or len(m.faces)==0:return
+ m.visual=trimesh.visual.TextureVisuals(material=M[mat]);S.add_geometry(m,node_name='anatomy_'+n,geom_name='anatomy_'+n);ANATOMY_COUNT+=1
+def muscle(n,c,r,mat='muscle'):
+ anat(n,ball(c,r,3),mat)
+def bone(n,a,b,r,mat='bone'):
+ anat(n,cyl(a,b,r,32),mat)
+def anatomy_limb(s,side):
+ # Shoulder girdle and upper limb: anatomically tapered, slightly flexed posture.
+ muscle(f'{side}_deltoid',(s*.385,1.49,.005),(.105,.125,.105))
+ muscle(f'{side}_biceps',(s*.375,1.345,.018),(.067,.145,.065))
+ muscle(f'{side}_triceps',(s*.435,1.35,-.018),(.064,.15,.061))
+ muscle(f'{side}_brachialis',(s*.405,1.255,.045),(.045,.075,.052))
+ muscle(f'{side}_forearm_flexors',(s*.385,1.045,.012),(.055,.13,.058))
+ muscle(f'{side}_forearm_extensors',(s*.425,1.06,-.035),(.052,.13,.052))
+ bone(f'{side}_humerus',(s*.39,1.48,-.005),(s*.425,1.205,-.005),.022)
+ bone(f'{side}_radius',(s*.405,1.18,.018),(s*.355,.89,.018),.010)
+ bone(f'{side}_ulna',(s*.445,1.18,-.012),(s*.385,.89,-.012),.010)
+ muscle(f'{side}_thenar',(s*.35,.84,.025),(.022,.045,.022))
+ muscle(f'{side}_hypothenar',(s*.405,.84,.018),(.019,.04,.02))
+ for i in range(5):
+  x=s*(.355+i*.018)
+  bone(f'{side}_metacarpal_{i}',(x,.855,.015),(x+s*.002,.79,.015),.006)
+  if i<4:
+   bone(f'{side}_proximal_phalanx_{i}',(x,.79,.015),(x,.745,.015),.0045)
+   bone(f'{side}_middle_phalanx_{i}',(x,.745,.015),(x,.715,.015),.0038)
+   bone(f'{side}_distal_phalanx_{i}',(x,.715,.015),(x,.69,.015),.0032)
+ # Pelvic and lower limb groups.
+ muscle(f'{side}_gluteus',(s*.145,.855,-.045),(.105,.105,.085))
+ muscle(f'{side}_quadriceps',(s*.155,.69,.035),(.088,.19,.075))
+ muscle(f'{side}_hamstrings',(s*.17,.68,-.045),(.078,.18,.065))
+ muscle(f'{side}_adductors',(s*.105,.69,.015),(.052,.16,.052))
+ muscle(f'{side}_tibialis_anterior',(s*.165,.31,.048),(.047,.15,.045))
+ muscle(f'{side}_gastrocnemius',(s*.18,.33,-.035),(.061,.12,.055))
+ muscle(f'{side}_soleus',(s*.17,.22,-.025),(.045,.09,.045))
+ bone(f'{side}_femur',(s*.16,.88,-.005),(s*.17,.49,-.005),.026)
+ bone(f'{side}_patella',(s*.17,.49,.065),(s*.17,.49,.092),.036)
+ bone(f'{side}_tibia',(s*.17,.46,.005),(s*.17,.13,.005),.017)
+ bone(f'{side}_fibula',(s*.205,.44,-.025),(s*.19,.14,-.025),.009)
+ # Foot: tarsals, metatarsals and phalanges.
+ muscle(f'{side}_foot_dorsum',(s*.17,.085,.105),(.065,.045,.115))
+ bone(f'{side}_calcaneus',(s*.17,.12,-.045),(s*.17,.08,.035),.022)
+ for i in range(5):
+  x=s*(.12+i*.025)
+  bone(f'{side}_metatarsal_{i}',(x,.10,.04),(x,.075,.19),.007)
+  bone(f'{side}_toe_{i}',(x,.075,.19),(x,.065,.235 if i==0 else .215),.0045)
+# Thorax and spine: individual ribs, sternum, vertebral bodies and clavicles.
+muscle('pectoralis_major_L',(-.145,1.43,.105),(.145,.105,.055))
+muscle('pectoralis_major_R',(.145,1.43,.105),(.145,.105,.055))
+muscle('rectus_abdominis_L',(-.055,1.205,.118),(.052,.16,.038))
+muscle('rectus_abdominis_R',(.055,1.205,.118),(.052,.16,.038))
+muscle('external_oblique_L',(-.185,1.20,.035),(.052,.16,.05))
+muscle('external_oblique_R',(.185,1.20,.035),(.052,.16,.05))
+muscle('latissimus_L',(-.205,1.38,-.085),(.085,.19,.055))
+muscle('latissimus_R',(.205,1.38,-.085),(.085,.19,.055))
+muscle('trapezius',(0,1.51,-.055),(.17,.13,.06))
+bone('sternum',(0,1.29,.145),(0,1.54,.145),.014)
+for rib in range(1,13):
+ y=1.535-rib*.023
+ width=.105+rib*.010
+ for side in (-1,1):
+  anat(f'rib_{rib:02}_{side}',cyl((0,y,.13),(side*width,y-.025,.075-rib*.001),.006,20),'bone')
+  anat(f'costal_cartilage_{rib:02}_{side}',cyl((side*width,y-.025,.075-rib*.001),(side*(width+.025),y-.035,.10-rib*.001),.0045,16),'cartilage')
+for i in range(24):
+ y=.99+i*.025
+ anat(f'vertebra_{i+1:02}',ball((0,y,-.115),(.025,.014,.026),2),'bone')
+ anat(f'spinous_process_{i+1:02}',cyl((0,y,-.125),(0,y,-.17),.006,12),'bone')
+for side in (-1,1):
+ bone(f'clavicle_{side}',(side*.015,1.55,.075),(side*.27,1.565,.035),.012)
+ bone(f'scapula_spine_{side}',(side*.09,1.48,-.09),(side*.25,1.39,-.11),.009)
+ muscle(f'intercostal_{side}',(side*.14,1.36,.065),(.035,.13,.035))
+# Neck, skull and facial structure.
+muscle('sternocleidomastoid_L',(-.055,1.64,.025),(.025,.10,.03))
+muscle('sternocleidomastoid_R',(.055,1.64,.025),(.025,.10,.03))
+anat('cranium',ball((0,1.845,-.005),(.105,.115,.09),4),'bone')
+anat('mandible',loft([(1.715,.055,.045,0,.035),(1.75,.078,.055,0,.025),(1.78,.072,.05,0,.015)]),'bone')
+bone('nasal_bone',(0,1.86,.085),(0,1.81,.105),.008)
+for side in (-1,1):
+ anat(f'zygomatic_{side}',cyl((side*.025,1.82,.075),(side*.09,1.80,.035),.009,20),'bone')
+ muscle(f'masseter_{side}',(side*.075,1.78,.045),(.025,.045,.03))
+# Fine vascular and neural paths on torso and limbs.
+for side in (-1,1):
+ cable(f'anatomy_brachial_plexus_{side}',[(side*.07,1.60,.08),(side*.12,1.52,.09),(side*.24,1.43,.055),(side*.34,1.30,.04)],.0035,'edge')
+ cable(f'anatomy_femoral_vessel_{side}',[(side*.08,.91,.10),(side*.11,.78,.105),(side*.14,.62,.09),(side*.16,.46,.075)],.003,'edge')
+ for i in range(8):
+  y=1.49-i*.055
+  anat(f'pectoralis_fiber_{side}_{i}',cyl((side*.035,y,.16),(side*.24,y-.025,.13),.0018,8),'vessel')
+# Thousands-scale surface fasteners: individually addressable micro-components, kept subtle.
+for side in (-1,1):
+ for region,cx,cy,cz,rows,cols,dx,dy in [
+  ('pauldron',.405,1.535,.145,12,12,.014,.012),
+  ('bracer',.405,1.02,.145,18,10,.012,.012),
+  ('thigh',.17,.68,.145,20,10,.012,.012),
+  ('greave',.17,.285,.15,18,10,.011,.011)]:
+  for row in range(rows):
+   for col in range(cols):
+    x=side*(cx+(col-(cols-1)/2)*dx)
+    y=cy+(row-(rows-1)/2)*dy
+    anat(f'fastener_{region}_{side}_{row}_{col}',ball((x,y,cz),(.0018,.0018,.0018),1),'bone')
+
 bounds=S.bounds
 height=float(bounds[1,1]-bounds[0,1])
 scale_y=1.8/height
